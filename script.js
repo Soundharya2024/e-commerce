@@ -88,8 +88,10 @@ const generatePdtCards = (body_container) => {
                             <h6 class="card-title">${pdt.Name}</h6>
                             <p class="card-text" style="font-size:0.8rem"><u>Description:</u> ${pdt.Description}</p>
                             <p class="card-text" style="font-size:0.8rem"><u>Features:</u> ${pdt.Features}</p>
-                            <h6 class="card-text">₹${pdt.Price}</h6>
-                            <a href="#" class="btn btn-primary" style="font-size:0.8rem">Add to Cart</a>
+                            <div class="d-flex justify-content-between">
+                                <h6 class="card-text">₹${pdt.Price}</h6>
+                                <a href="#" class="btn btn-primary" style="font-size:0.8rem">Add to Cart</a>
+                            </div>
                         </div>`;
         body_content.appendChild(card);
     });
