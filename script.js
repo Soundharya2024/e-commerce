@@ -83,7 +83,7 @@ const generatePdtCards = (body_container) => {
         const card = document.createElement("div");
         card.classList.add("card", "p-2", "m-2");
         card.style = "width: 24rem;";
-        card.innerHTML = `<img src="${pdt.Img_path}" class="card-img-top w-100 h-25 object-fit-contain" alt="Product Image">
+        card.innerHTML = `<img src="${pdt.Img_path}" class="card-img-top w-100 h-25 object-fit-scale" alt="Product Image">
                         <div class="card-body">
                             <h6 class="card-title">${pdt.Name}</h6>
                             <p class="card-text" style="font-size:0.8rem"><u>Description:</u> ${pdt.Description}</p>
