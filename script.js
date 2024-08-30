@@ -74,6 +74,10 @@ const pdts = [
 document.addEventListener("DOMContentLoaded", () => {
     const body_container = document.getElementById("body-container");
     generatePdtCards(body_container);
+    addToCartClickAction();
+
+    const cart_modal_body = document.querySelector("#cart-modal .modal-body");
+    cart_modal_body.innerHTML = "<p data-initial>Cart is empty</p>";
 });
 
 const generatePdtCards = (body_container) => {
@@ -83,18 +87,48 @@ const generatePdtCards = (body_container) => {
     pdts.map((pdt) => {
         const card_container = document.createElement("div");
         card_container.classList.add("col-lg-3", "col-md-3", "col-sm-3", "col-xs-1", "mb-3");
-        card_container.innerHTML = `
-                        <div class="card">
-                            <div class="card-body">
-                                <h6 class="card-title">${pdt.Name}</h6>
-                                <p class="card-text"><u>Features:</u> ${pdt.Features}</p>
-                                <h6 class="card-text">₹${pdt.Price}</h6>
-                                <div class="card-footer text-center pb-0">
-                                    <a href="#" class="btn btn-primary">Add to Cart</a>
-                                </div>
-                            </div>
-                        </div>`;
+        card_container.innerHTML = `<div class="card">
+                                        <div class="card-body">
+                                            <h6 class="card-title pdt-details">${pdt.Name}</h6>
+                                            <p class="card-text pdt-details"><u>Features:</u> ${pdt.Features}</p>
+                                            <h6 class="card-text pdt-details text-end">₹${pdt.Price}</h6>
+                                            <div class="card-footer text-center pb-0 bg-white">
+                                                <button class="btn btn-primary cart-btn">Add to Cart</button>
+                                            </div>
+                                        </div>
+                                    </div>`;
         body_content.appendChild(card_container);
     });
     body_container.appendChild(body_content);
+}
+
+const addToCartClickAction = () => {
+    document.querySelectorAll("button.cart-btn").forEach((cart_btn) => {
+        cart_btn.addEventListener("click", (e) => {
+            console.log("cart_btn clicked event => " + e);
+            const current_card = e.target.parentElement.parentElement;
+            const current_pdt_details = current_card.getElementsByClassName("pdt-details");
+            const cart_modal_body = document.querySelector("#cart-modal .modal-body");
+    
+            const card_container = document.createElement("div");
+            card_container.classList.add("col-12", "mb-3");
+            card_container.innerHTML = `<div class="card">
+                                            <div class="card-body d-flex justify-content-between">
+                                                <h6 class="card-title">${current_pdt_details[0].innerText}</h6>
+                                                <p class="card-text">${current_pdt_details[2].innerText}</p>
+                                            </div>
+                                        </div>`;
+            if(cart_modal_body.querySelector('p[data-initial]'))
+            {
+                //First product added to the cart
+                cart_modal_body.innerHTML = "";
+                cart_modal_body.appendChild(card_container);
+                console.log("first click");
+            }
+            else {
+                cart_modal_body.appendChild(card_container);
+                console.log("subsequent clicks");
+            }
+        });
+    });
 }
