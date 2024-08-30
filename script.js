@@ -82,14 +82,14 @@ const generatePdtCards = (body_container) => {
     pdts.map((pdt) => {
         const card = document.createElement("div");
         card.classList.add("card", "p-2", "m-2");
-        card.style = "width: 18rem";
-        card.innerHTML = `<div class="flex-shrink-0"><img src="${pdt.Img_path}" class="card-img-top w-100" alt="Product Image"></div>
+        card.style = "width: 24rem;";
+        card.innerHTML = `<img src="${pdt.Img_path}" class="card-img-top w-100 h-25 object-fit-contain" alt="Product Image">
                         <div class="card-body">
-                            <h5 class="card-title">${pdt.Name}</h5>
-                            <p class="card-text"><u>Description:</u> ${pdt.Description}</p>
-                            <p class="card-text"><u>Features:</u> ${pdt.Features}</p>
-                            <h5 class="card-text">₹${pdt.Price}</h5>
-                            <a href="#" class="btn btn-primary">Add to Cart</a>
+                            <h6 class="card-title">${pdt.Name}</h6>
+                            <p class="card-text" style="font-size:0.8rem"><u>Description:</u> ${pdt.Description}</p>
+                            <p class="card-text" style="font-size:0.8rem"><u>Features:</u> ${pdt.Features}</p>
+                            <h6 class="card-text">₹${pdt.Price}</h6>
+                            <a href="#" class="btn btn-primary" style="font-size:0.8rem">Add to Cart</a>
                         </div>`;
         body_content.appendChild(card);
     });
