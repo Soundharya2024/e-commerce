@@ -105,7 +105,6 @@ const generatePdtCards = (body_container) => {
 const addToCartClickAction = () => {
     document.querySelectorAll("button.cart-btn").forEach((cart_btn) => {
         cart_btn.addEventListener("click", (e) => {
-            console.log("cart_btn clicked event => " + e);
             const current_card = e.target.parentElement.parentElement;
             const current_pdt_details = current_card.getElementsByClassName("pdt-details");
             const cart_modal_body = document.querySelector("#cart-modal .modal-body");
@@ -123,12 +122,11 @@ const addToCartClickAction = () => {
                 //First product added to the cart
                 cart_modal_body.innerHTML = "";
                 cart_modal_body.appendChild(card_container);
-                console.log("first click");
             }
             else {
                 cart_modal_body.appendChild(card_container);
-                console.log("subsequent clicks");
             }
+            $("#addcart-alert-modal").modal("show");
         });
     });
 }
