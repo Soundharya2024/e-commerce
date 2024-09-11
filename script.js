@@ -92,6 +92,7 @@ const generatePdtCards = (body_container) => {
                                             <h6 class="card-title pdt-details">${pdt.Name}</h6>
                                             <p class="card-text pdt-details"><u>Features:</u> ${pdt.Features}</p>
                                             <h6 class="card-text pdt-details text-end">₹${pdt.Price}</h6>
+                                            <p class="pdt-details" data-qty="0"></p>
                                             <div class="card-footer text-center pb-0 bg-white">
                                                 <button class="btn btn-primary cart-btn">Add to Cart</button>
                                             </div>
@@ -109,16 +110,22 @@ const addToCartClickAction = () => {
             const current_pdt_details = current_card.getElementsByClassName("pdt-details");
             const cart_modal_body = document.querySelector("#cart-modal .modal-body");
     
+            const qty = ++current_pdt_details[3].dataset.qty;
+
             const card_container = document.createElement("div");
             card_container.classList.add("col-12", "mb-3");
             card_container.innerHTML = `<div class="card">
-                                            <div class="card-body d-flex justify-content-between">
+                                            <div class="card-body d-flex justify-content-between align-items-baseline">
                                                 <h6 class="card-title">${current_pdt_details[0].innerText}</h6>
                                                 <p class="card-text">${current_pdt_details[2].innerText}</p>
+                                                <div class="d-flex justify-content-between align-items-baseline qty-container" style="width: 20%">
+                                                    <button class="btn btn-secondary bg-danger btn-minus btn-eListener">-</button>
+                                                    <p class="qty">${qty}</p>
+                                                    <button class="btn btn-secondary bg-success btn-plus btn-eListener">+</button>
+                                                </div>
                                             </div>
                                         </div>`;
-            if(cart_modal_body.querySelector('p[data-initial]'))
-            {
+            if(cart_modal_body.querySelector('p[data-initial]')){
                 //First product added to the cart
                 cart_modal_body.innerHTML = "";
                 cart_modal_body.appendChild(card_container);
@@ -126,6 +133,10 @@ const addToCartClickAction = () => {
             else {
                 cart_modal_body.appendChild(card_container);
             }
+
+            //Button "+" working
+            cart_modal_body.getElementsByClassName("btn-plus-eListener");
+
             $("#addcart-alert-modal").modal("show");
         });
     });
