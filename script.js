@@ -86,12 +86,12 @@ const generatePdtCards = (body_container) => {
     body_content.style = "margin-top: 100px";
     pdts.map((pdt) => {
         const card_container = document.createElement("div");
-        card_container.classList.add("col-lg-3", "col-md-3", "col-sm-3", "col-xs-1", "mb-3");
+        card_container.classList.add("col-lg-3", "col-md-3", "col-sm-4", "col-xs-12", "mb-3");
         card_container.innerHTML = `<div class="card">
                                         <div class="card-body">
-                                            <h6 class="card-title pdt-details">${pdt.Name}</h6>
-                                            <p class="card-text pdt-details"><u>Features:</u> ${pdt.Features}</p>
-                                            <h6 class="card-text pdt-details text-end">₹${pdt.Price}</h6>
+                                            <h6 class="card-title pdt-details pdt-name" data-name="${pdt.Name}">${pdt.Name}</h6>
+                                            <p class="card-text pdt-details pdt-features"><u>Features:</u> ${pdt.Features}</p>
+                                            <h6 class="card-text pdt-details pdt-price text-end">₹${pdt.Price}</h6>
                                             <p class="pdt-details" data-qty="0"></p>
                                             <div class="card-footer text-center pb-0 bg-white">
                                                 <button class="btn btn-primary cart-btn">Add to Cart</button>
@@ -111,17 +111,18 @@ const addToCartClickAction = () => {
             const cart_modal_body = document.querySelector("#cart-modal .modal-body");
     
             const qty = ++current_pdt_details[3].dataset.qty;
+            const minus_btn_creation = (qty === 1) ? `<button class="btn btn-secondary bg-danger btn-minus eListener" disabled>-</button>` : `<button class="btn btn-secondary bg-danger btn-minus eListener">-</button>`;
 
             const card_container = document.createElement("div");
             card_container.classList.add("col-12", "mb-3");
             card_container.innerHTML = `<div class="card">
                                             <div class="card-body d-flex justify-content-between align-items-baseline">
-                                                <h6 class="card-title">${current_pdt_details[0].innerText}</h6>
-                                                <p class="card-text">${current_pdt_details[2].innerText}</p>
-                                                <div class="d-flex justify-content-between align-items-baseline qty-container" style="width: 20%">
-                                                    <button class="btn btn-secondary bg-danger btn-minus btn-eListener">-</button>
+                                                <h6 class="card-title pdt-name">${current_pdt_details[0].innerText}</h6>
+                                                <p class="card-text pdt-price">${current_pdt_details[2].innerText}</p>
+                                                <div class="d-flex justify-content-between align-items-baseline qty-container" style="width: 20%">     
+                                                    ${minus_btn_creation}
                                                     <p class="qty">${qty}</p>
-                                                    <button class="btn btn-secondary bg-success btn-plus btn-eListener">+</button>
+                                                    <button class="btn btn-secondary bg-success btn-plus eListener">+</button>
                                                 </div>
                                             </div>
                                         </div>`;
@@ -134,9 +135,46 @@ const addToCartClickAction = () => {
                 cart_modal_body.appendChild(card_container);
             }
 
-            //Button "+" working
-            cart_modal_body.getElementsByClassName("btn-plus-eListener");
+            //To select the plus btns without event listeners
+            const plus_btn = cart_modal_body.getElementsByClassName("btn-plus eListener")[0];
 
+            //Button "+" working
+            plus_btn.addEventListener("click", (event) => {
+                //Updating qty in cart
+                const curr_cart_qty_ele = event.target.parentElement.firstElementChild.nextElementSibling;
+                ++curr_cart_qty_ele.textContent; //increment of quantity
+                if(curr_cart_qty_ele.textContent === '2') {
+                    curr_cart_qty_ele.previousElementSibling.removeAttribute("disabled"); //Enable "-" button
+                }
+
+                //Updating qty in product details
+                const curr_pdt_name = event.target.parentElement.parentElement.firstElementChild.textContent;
+                //Finding product on product page through pdt-name and its quantity
+                const curr_pdt_qty_ele =  document.querySelector(`.pdt-details.pdt-name[data-name="${curr_pdt_name}"]`).parentElement.lastElementChild.previousElementSibling;
+                ++curr_pdt_qty_ele.dataset.qty; //increment of quantity
+            });    
+            plus_btn.classList.remove("eListener");
+            
+            //To select the plus btns without event listeners
+            const minus_btn = cart_modal_body.getElementsByClassName("btn-minus eListener")[0];
+
+            //Button "-" working
+            minus_btn.addEventListener("click", (event) => {
+                //Updating qty in cart
+                const curr_cart_qty_ele = event.target.parentElement.firstElementChild.nextElementSibling;
+                --curr_cart_qty_ele.textContent; //decrement of quantity
+                if(curr_cart_qty_ele.textContent === '1') {
+                    curr_cart_qty_ele.previousElementSibling.setAttribute("disabled",""); //Stop decrement at quantity 1
+                }
+                
+                //Updating qty in product details
+                const curr_pdt_name = event.target.parentElement.parentElement.firstElementChild.textContent;
+                //Finding product on product page through pdt-name and its quantity
+                const curr_pdt_qty_ele =  document.querySelector(`.pdt-details.pdt-name[data-name="${curr_pdt_name}"]`).parentElement.lastElementChild.previousElementSibling;
+                --curr_pdt_qty_ele.dataset.qty; //decrement of quantity
+            }); 
+            minus_btn.classList.remove("eListener");
+            
             $("#addcart-alert-modal").modal("show");
         });
     });
