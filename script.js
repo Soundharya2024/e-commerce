@@ -96,6 +96,11 @@ const generatePdtCards = (body_container) => {
                                             <div class="card-footer text-center pb-0 bg-white">
                                                 <button class="btn btn-primary cart-btn">Add to Cart</button>
                                             </div>
+                                            <div class="card-footer text-center d-none justify-content-evenly align-items-baseline qty-container bg-white">     
+                                                <button class="btn btn-secondary bg-danger btn-minus eListener" disabled>-</button>
+                                                <p class="qty">0</p>
+                                                <button class="btn btn-secondary bg-success btn-plus eListener">+</button>
+                                            </div>
                                         </div>
                                     </div>`;
         body_content.appendChild(card_container);
@@ -111,7 +116,21 @@ const addToCartClickAction = () => {
             const cart_modal_body = document.querySelector("#cart-modal .modal-body");
     
             const qty = ++current_pdt_details[3].dataset.qty;
-            const minus_btn_creation = (qty === 1) ? `<button class="btn btn-secondary bg-danger btn-minus eListener" disabled>-</button>` : `<button class="btn btn-secondary bg-danger btn-minus eListener">-</button>`;
+
+            //Quantity modification function
+            if(qty === 1) {
+                //Display of quantity change buttons
+                const qty_btns_ele = current_card.lastElementChild;
+                qty_btns_ele.classList.remove("d-none");
+                qty_btns_ele.classList.add("d-flex");
+                qty_btns_ele.querySelector(".qty").innerText = qty;
+
+                //Hiding "Add to Cart" button
+                current_card.lastElementChild.previousElementSibling.classList.add("d-none");
+            }
+
+            //Product addition to cart (modal)
+            const minus_btn_cart = (qty === 1) ? `<button class="btn btn-secondary bg-danger btn-minus eListener" disabled>-</button>` : `<button class="btn btn-secondary bg-danger btn-minus eListener">-</button>`;
 
             const card_container = document.createElement("div");
             card_container.classList.add("col-12", "mb-3");
@@ -120,7 +139,7 @@ const addToCartClickAction = () => {
                                                 <h6 class="card-title pdt-name">${current_pdt_details[0].innerText}</h6>
                                                 <p class="card-text pdt-price">${current_pdt_details[2].innerText}</p>
                                                 <div class="d-flex justify-content-between align-items-baseline qty-container" style="width: 20%">     
-                                                    ${minus_btn_creation}
+                                                    ${minus_btn_cart}
                                                     <p class="qty">${qty}</p>
                                                     <button class="btn btn-secondary bg-success btn-plus eListener">+</button>
                                                 </div>
