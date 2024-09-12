@@ -77,7 +77,7 @@ document.addEventListener("DOMContentLoaded", () => {
     addToCartClickAction();
 
     const cart_modal_body = document.querySelector("#cart-modal .modal-body");
-    cart_modal_body.innerHTML = "<p data-initial>Cart is empty</p>";
+    cart_modal_body.innerHTML = "<p data-initial class='text-center'>Cart is empty</p>";
 });
 
 const generatePdtCards = (body_container) => {
@@ -87,7 +87,7 @@ const generatePdtCards = (body_container) => {
     pdts.map((pdt) => {
         const card_container = document.createElement("div");
         card_container.classList.add("col-lg-3", "col-md-3", "col-sm-4", "col-xs-12", "mb-3");
-        card_container.innerHTML = `<div class="card">
+        card_container.innerHTML = `<div class="card pdt">
                                         <div class="card-body">
                                             <h6 class="card-title pdt-details pdt-name" data-name="${pdt.Name}">${pdt.Name}</h6>
                                             <p class="card-text pdt-details pdt-features"><u>Features:</u> ${pdt.Features}</p>
@@ -97,7 +97,7 @@ const generatePdtCards = (body_container) => {
                                                 <button class="btn btn-primary cart-btn">Add to Cart</button>
                                             </div>
                                             <div class="card-footer text-center d-none justify-content-evenly align-items-baseline qty-container bg-white">     
-                                                <button class="btn btn-secondary bg-danger btn-minus eListener" disabled>-</button>
+                                                <button class="btn btn-secondary bg-danger btn-minus eListener">-</button>
                                                 <p class="qty">0</p>
                                                 <button class="btn btn-secondary bg-success btn-plus eListener">+</button>
                                             </div>
@@ -117,12 +117,12 @@ const addToCartClickAction = () => {
     
             const qty = ++current_pdt_details[3].dataset.qty;
 
-            //Quantity modification function
             if(qty === 1) {
                 //Display of quantity change buttons
                 const qty_btns_ele = current_card.lastElementChild;
                 qty_btns_ele.classList.remove("d-none");
                 qty_btns_ele.classList.add("d-flex");
+                //Setting quantity value
                 qty_btns_ele.querySelector(".qty").innerText = qty;
 
                 //Hiding "Add to Cart" button
@@ -130,16 +130,14 @@ const addToCartClickAction = () => {
             }
 
             //Product addition to cart (modal)
-            const minus_btn_cart = (qty === 1) ? `<button class="btn btn-secondary bg-danger btn-minus eListener" disabled>-</button>` : `<button class="btn btn-secondary bg-danger btn-minus eListener">-</button>`;
-
             const card_container = document.createElement("div");
             card_container.classList.add("col-12", "mb-3");
-            card_container.innerHTML = `<div class="card">
+            card_container.innerHTML = `<div class="card cart">
                                             <div class="card-body d-flex justify-content-between align-items-baseline">
-                                                <h6 class="card-title pdt-name">${current_pdt_details[0].innerText}</h6>
+                                                <h6 class="card-title pdt-name" data-name="${current_pdt_details[0].innerText}">${current_pdt_details[0].innerText}</h6>
                                                 <p class="card-text pdt-price">${current_pdt_details[2].innerText}</p>
                                                 <div class="d-flex justify-content-between align-items-baseline qty-container" style="width: 20%">     
-                                                    ${minus_btn_cart}
+                                                    <button class="btn btn-secondary bg-danger btn-minus eListener">-</button>
                                                     <p class="qty">${qty}</p>
                                                     <button class="btn btn-secondary bg-success btn-plus eListener">+</button>
                                                 </div>
@@ -153,48 +151,101 @@ const addToCartClickAction = () => {
             else {
                 cart_modal_body.appendChild(card_container);
             }
-
-            //To select the plus btns without event listeners
-            const plus_btn = cart_modal_body.getElementsByClassName("btn-plus eListener")[0];
-
-            //Button "+" working
-            plus_btn.addEventListener("click", (event) => {
-                //Updating qty in cart
-                const curr_cart_qty_ele = event.target.parentElement.firstElementChild.nextElementSibling;
-                ++curr_cart_qty_ele.textContent; //increment of quantity
-                if(curr_cart_qty_ele.textContent === '2') {
-                    curr_cart_qty_ele.previousElementSibling.removeAttribute("disabled"); //Enable "-" button
-                }
-
-                //Updating qty in product details
-                const curr_pdt_name = event.target.parentElement.parentElement.firstElementChild.textContent;
-                //Finding product on product page through pdt-name and its quantity
-                const curr_pdt_qty_ele =  document.querySelector(`.pdt-details.pdt-name[data-name="${curr_pdt_name}"]`).parentElement.lastElementChild.previousElementSibling;
-                ++curr_pdt_qty_ele.dataset.qty; //increment of quantity
-            });    
-            plus_btn.classList.remove("eListener");
             
-            //To select the plus btns without event listeners
-            const minus_btn = cart_modal_body.getElementsByClassName("btn-minus eListener")[0];
-
-            //Button "-" working
-            minus_btn.addEventListener("click", (event) => {
-                //Updating qty in cart
-                const curr_cart_qty_ele = event.target.parentElement.firstElementChild.nextElementSibling;
-                --curr_cart_qty_ele.textContent; //decrement of quantity
-                if(curr_cart_qty_ele.textContent === '1') {
-                    curr_cart_qty_ele.previousElementSibling.setAttribute("disabled",""); //Stop decrement at quantity 1
-                }
-                
-                //Updating qty in product details
-                const curr_pdt_name = event.target.parentElement.parentElement.firstElementChild.textContent;
-                //Finding product on product page through pdt-name and its quantity
-                const curr_pdt_qty_ele =  document.querySelector(`.pdt-details.pdt-name[data-name="${curr_pdt_name}"]`).parentElement.lastElementChild.previousElementSibling;
-                --curr_pdt_qty_ele.dataset.qty; //decrement of quantity
-            }); 
-            minus_btn.classList.remove("eListener");
+            qtyPlusBtnAction();
+            qtyMinusBtnAction();
             
             $("#addcart-alert-modal").modal("show");
         });
+    });
+}
+
+const qtyPlusBtnAction = () => {
+    //To select the plus btns without event listeners
+    const plus_btns = document.querySelectorAll(".d-flex > .btn-plus.eListener");
+
+    //Button "+" working
+    plus_btns.forEach((plus_btn) => {
+        plus_btn.addEventListener("click", (event) => {
+            const curr_pdt_name = event.target.parentElement.parentElement.firstElementChild.textContent;
+            
+            //Finding product on product page through pdt-name and its quantity
+            const curr_pdt_ele = document.querySelector(`.pdt .pdt-details.pdt-name[data-name="${curr_pdt_name}"]`).parentElement;
+            
+            //Increment of quantity data element
+            const curr_pdt_qty_data_ele =  curr_pdt_ele.querySelector(".pdt p[data-qty]");
+            ++curr_pdt_qty_data_ele.dataset.qty;
+
+            //Updating qty in product details
+            curr_pdt_ele.querySelector(".pdt .qty-container .qty").textContent = curr_pdt_qty_data_ele.dataset.qty;
+            
+            //Finding product on cart through pdt-name
+            const curr_cart_ele = document.querySelector(`.cart .pdt-name[data-name="${curr_pdt_name}"]`).parentElement;
+
+            //Updating qty in cart
+            const curr_cart_qty_ele = curr_cart_ele.querySelector(".cart .qty-container .qty");
+            curr_cart_qty_ele.textContent = curr_pdt_qty_data_ele.dataset.qty;
+            
+            //Enable "-" button
+            if(curr_cart_qty_ele.textContent === '2') {
+                curr_cart_qty_ele.previousElementSibling.removeAttribute("disabled"); 
+            }
+        });
+        plus_btn.classList.remove("eListener");
+    })    
+}
+
+const qtyMinusBtnAction = () => {
+    //To select the plus btns without event listeners
+    const minus_btns = document.querySelectorAll(".d-flex > .btn-minus.eListener");
+
+    //Button "-" working
+    minus_btns.forEach((minus_btn) => {
+        minus_btn.addEventListener("click", (event) => {
+            const curr_pdt_name = event.target.parentElement.parentElement.firstElementChild.textContent;
+            
+            //Finding product on product page through pdt-name and its quantity
+            const curr_pdt_ele = document.querySelector(`.pdt .pdt-details.pdt-name[data-name="${curr_pdt_name}"]`).parentElement;
+            
+            //Decrement of quantity data element
+            const curr_pdt_qty_data_ele =  curr_pdt_ele.querySelector(".pdt p[data-qty]");
+            --curr_pdt_qty_data_ele.dataset.qty;
+
+            //Updating qty in product details
+            curr_pdt_ele.querySelector(".pdt .qty-container .qty").textContent = curr_pdt_qty_data_ele.dataset.qty;
+            
+            //Finding product on cart through pdt-name
+            const curr_cart_ele = document.querySelector(`.cart .pdt-name[data-name="${curr_pdt_name}"]`).parentElement;
+
+            //Updating qty in cart
+            const curr_cart_qty_ele = curr_cart_ele.querySelector(".cart .qty-container .qty");
+            curr_cart_qty_ele.textContent = curr_pdt_qty_data_ele.dataset.qty;
+
+            //In Cart
+            // if(curr_cart_qty_ele.textContent === '1') {
+            //     curr_cart_qty_ele.previousElementSibling.setAttribute("disabled",""); //Stop decrement at quantity 1
+            // }
+
+            if(curr_pdt_qty_data_ele.dataset.qty === '0'){
+                //In product page
+                //Display of "Add to Cart" button
+                curr_pdt_ele.lastElementChild.previousElementSibling.classList.remove("d-none");
+
+                //Hiding quantity change buttons
+                const qty_btns_ele = curr_pdt_ele.lastElementChild;
+                qty_btns_ele.classList.remove("d-flex");
+                qty_btns_ele.classList.add("d-none");
+
+                //Remove item from cart
+                curr_cart_ele.parentElement.parentElement.remove();
+            }
+
+            //Update Cart to its initial state
+            const cart_modal_body = document.querySelector("#cart-modal .modal-body");
+            if(!cart_modal_body.hasChildNodes()){
+                cart_modal_body.innerHTML = "<p data-initial class='text-center'>Cart is empty</p>";
+            }
+        });
+        minus_btn.classList.remove("eListener");
     });
 }
