@@ -169,27 +169,14 @@ const qtyPlusBtnAction = () => {
         plus_btn.addEventListener("click", (event) => {
             const curr_pdt_name = event.target.parentElement.parentElement.firstElementChild.textContent;
             
-            //Finding product on product page through pdt-name and its quantity
+            //Finding product and data-qty elements on product page through pdt-name
             const curr_pdt_ele = document.querySelector(`.pdt .pdt-details.pdt-name[data-name="${curr_pdt_name}"]`).parentElement;
-            
-            //Increment of quantity data element
             const curr_pdt_qty_data_ele =  curr_pdt_ele.querySelector(".pdt p[data-qty]");
-            ++curr_pdt_qty_data_ele.dataset.qty;
 
-            //Updating qty in product details
-            curr_pdt_ele.querySelector(".pdt .qty-container .qty").textContent = curr_pdt_qty_data_ele.dataset.qty;
-            
             //Finding product on cart through pdt-name
             const curr_cart_ele = document.querySelector(`.cart .pdt-name[data-name="${curr_pdt_name}"]`).parentElement;
-
-            //Updating qty in cart
-            const curr_cart_qty_ele = curr_cart_ele.querySelector(".cart .qty-container .qty");
-            curr_cart_qty_ele.textContent = curr_pdt_qty_data_ele.dataset.qty;
             
-            //Enable "-" button
-            if(curr_cart_qty_ele.textContent === '2') {
-                curr_cart_qty_ele.previousElementSibling.removeAttribute("disabled"); 
-            }
+            qty_update("+", curr_pdt_ele, curr_pdt_qty_data_ele, curr_cart_ele);
         });
         plus_btn.classList.remove("eListener");
     })    
@@ -204,27 +191,14 @@ const qtyMinusBtnAction = () => {
         minus_btn.addEventListener("click", (event) => {
             const curr_pdt_name = event.target.parentElement.parentElement.firstElementChild.textContent;
             
-            //Finding product on product page through pdt-name and its quantity
+            //Finding product and data-qty elements on product page through pdt-name
             const curr_pdt_ele = document.querySelector(`.pdt .pdt-details.pdt-name[data-name="${curr_pdt_name}"]`).parentElement;
-            
-            //Decrement of quantity data element
             const curr_pdt_qty_data_ele =  curr_pdt_ele.querySelector(".pdt p[data-qty]");
-            --curr_pdt_qty_data_ele.dataset.qty;
 
-            //Updating qty in product details
-            curr_pdt_ele.querySelector(".pdt .qty-container .qty").textContent = curr_pdt_qty_data_ele.dataset.qty;
-            
             //Finding product on cart through pdt-name
             const curr_cart_ele = document.querySelector(`.cart .pdt-name[data-name="${curr_pdt_name}"]`).parentElement;
 
-            //Updating qty in cart
-            const curr_cart_qty_ele = curr_cart_ele.querySelector(".cart .qty-container .qty");
-            curr_cart_qty_ele.textContent = curr_pdt_qty_data_ele.dataset.qty;
-
-            //In Cart
-            // if(curr_cart_qty_ele.textContent === '1') {
-            //     curr_cart_qty_ele.previousElementSibling.setAttribute("disabled",""); //Stop decrement at quantity 1
-            // }
+            qty_update("-", curr_pdt_ele, curr_pdt_qty_data_ele, curr_cart_ele);
 
             if(curr_pdt_qty_data_ele.dataset.qty === '0'){
                 //In product page
@@ -248,4 +222,21 @@ const qtyMinusBtnAction = () => {
         });
         minus_btn.classList.remove("eListener");
     });
+}
+
+const qty_update = (operator, curr_pdt_ele, curr_pdt_qty_data_ele, curr_cart_ele) => {
+    
+    //Increment/Decrement of quantity data element
+    if(operator === "+"){
+        ++curr_pdt_qty_data_ele.dataset.qty;
+    }else if(operator === "-"){
+        --curr_pdt_qty_data_ele.dataset.qty;
+    }
+    
+    //Updating qty in product details
+    curr_pdt_ele.querySelector(".pdt .qty-container .qty").textContent = curr_pdt_qty_data_ele.dataset.qty;
+
+    //Updating qty in cart
+    const curr_cart_qty_ele = curr_cart_ele.querySelector(".cart .qty-container .qty");
+    curr_cart_qty_ele.textContent = curr_pdt_qty_data_ele.dataset.qty;
 }
